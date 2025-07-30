@@ -4,4 +4,6 @@ services:
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn aibot.aibot:app"
-    autoDeploy: true
+    envVars:
+      - key: OPENROUTER_API_KEY
+        value: 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
