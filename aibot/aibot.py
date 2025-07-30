@@ -61,7 +61,7 @@ def chat():
 
 if __name__ == "__main__":
     app.run(debug=True)
-app = app  # Required for gunicorn to recognize it
+# app = app  # Required for gunicorn to recognize it (uncomment if needed outside __main__ block)
 
 
 
