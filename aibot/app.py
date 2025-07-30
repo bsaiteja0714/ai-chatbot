@@ -1,8 +1,9 @@
-import os, requests
+import os
+import requests
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 
-load_dotenv()  # Load env vars from .env if running locally
+load_dotenv()
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
@@ -15,11 +16,11 @@ def index():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    data     = request.get_json()
-    message  = data.get("message", "").strip()
-    model    = data.get("model", "gpt-3.5-turbo")
+    data = request.get_json()
+    user_msg = data.get("message", "").strip()
+    model = data.get("model", "gpt-3.5-turbo")
 
-    if not message:
+    if not user_msg:
         return jsonify({"message": "Please enter a message."})
 
     headers = {
@@ -31,7 +32,7 @@ def chat():
         "model": model,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user",   "content": message}
+            {"role": "user", "content": user_msg}
         ],
         "temperature": 0.7,
         "max_tokens": 200
@@ -41,13 +42,12 @@ def chat():
         resp = requests.post(API_URL, headers=headers, json=payload)
         resp.raise_for_status()
         result = resp.json()
-        reply = result["choices"][0]["message"]["content"].strip()
+        reply = result.get("choices", [{}])[0].get("message", {}).get("content", "").strip() or "⚠️ No reply."
+    except requests.exceptions.HTTPError:
+        print("HTTP Error:", resp.text)
+        reply = "⚠️ HTTP error from API."
     except Exception as e:
         print("Error:", e)
-        reply = "❌ API or server error."
+        reply = "❌ Server error."
 
     return jsonify({"message": reply})
-
-# ⚠️ Very important for gunicorn
-if __name__ != "__main__":
-    app = app  # For gunicorn to detect 'app' object

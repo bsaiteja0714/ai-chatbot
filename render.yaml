@@ -4,13 +4,7 @@ services:
     env: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn aibot.aibot:app"
+    startCommand: "gunicorn aibot.app:app"
     envVars:
       - key: OPENROUTER_API_KEY
         value: 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
-      - key: OPENAI_API_KEY
-        value: sk-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
-      - key: OPENAI_ORGANIZATION
-        value: org-1234567890abcdef1234567890abcdef
-      - key: OPENROUTER_ORGANIZATION
-        value: org-1234567890abcdef1234567890abcdef 
