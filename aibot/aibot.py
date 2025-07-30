@@ -24,8 +24,6 @@ def chat():
     if not user_msg:
         return jsonify({"message": "Please enter a message."})
 
-    # You can also log_history("user", user_msg)
-
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
@@ -49,7 +47,6 @@ def chat():
             reply = choices[0]["message"]["content"].strip()
         else:
             reply = "⚠️ No reply."
-        # log_history("assistant", reply)
     except requests.exceptions.HTTPError:
         print("HTTP Error:", resp.text)
         reply = "⚠️ HTTP error from API."
@@ -59,10 +56,5 @@ def chat():
 
     return jsonify({"message": reply})
 
-if __name__ == "__main__":
-    app.run(debug=True)
-# app = app  # Required for gunicorn to recognize it (uncomment if needed outside __main__ block)
-
-
-
-
+# This line ensures Gunicorn can access the app
+app = app
