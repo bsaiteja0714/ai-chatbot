@@ -5,8 +5,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__, template_folder="templates", static_folder="static")
-
+app = Flask(
+    __name__,
+    template_folder="../templates",
+    static_folder="../static"
+)
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -20,6 +23,9 @@ def chat():
     data = request.get_json()
     user_msg = data.get("message", "").strip()
     model = data.get("model", "gpt-3.5-turbo")
+
+    if not API_KEY:
+        return jsonify({"message": "⚠️ API key not configured on server."}), 500
 
     if not user_msg:
         return jsonify({"message": "Please enter a message."})
@@ -43,12 +49,14 @@ def chat():
         resp = requests.post(API_URL, headers=headers, json=payload)
         resp.raise_for_status()
         result = resp.json()
-        reply = result.get("choices", [{}])[0].get("message", {}).get("content", "").strip() or "⚠️ No reply."
-    except requests.exceptions.HTTPError:
-        print("HTTP Error:", resp.text)
-        reply = "⚠️ HTTP error from API."
+        reply = result.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+        if not reply:
+            reply = "⚠️ No reply from model."
+    except requests.exceptions.RequestException as e:
+        print("API Request Error:", e)
+        reply = "⚠️ Problem connecting to the API."
     except Exception as e:
-        print("Error:", e)
+        print("Server Error:", e)
         reply = "❌ Server error."
 
     return jsonify({"message": reply})
