@@ -3,11 +3,15 @@ import requests
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 
-load_dotenv()
+# ✅ Load .env and print debug info
+dotenv_loaded = load_dotenv()
+api_key = os.getenv("OPENROUTER_API_KEY")
 
-app = Flask(__name__)  # ✅ No need to set template/static paths manually
+print("🔍 .env loaded:", dotenv_loaded)
+print("🔑 API KEY from env:", api_key if api_key else "❌ NOT FOUND")
 
-API_KEY = os.getenv("OPENROUTER_API_KEY")
+app = Flask(__name__)
+
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 @app.route("/")
@@ -20,14 +24,14 @@ def chat():
     user_msg = data.get("message", "").strip()
     model = data.get("model", "gpt-3.5-turbo")
 
-    if not API_KEY:
+    if not api_key:
         return jsonify({"message": "⚠️ API key not configured on server."}), 500
 
     if not user_msg:
         return jsonify({"message": "Please enter a message."})
 
     headers = {
-        "Authorization": f"Bearer {API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
 
@@ -56,3 +60,6 @@ def chat():
         reply = "❌ Server error."
 
     return jsonify({"message": reply})
+
+if __name__ == "__main__":
+    app.run(debug=True)
