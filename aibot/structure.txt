@@ -95,7 +95,7 @@
 │   │       │   │   ├── core.cpython-313.pyc
 │   │       │   │   ├── decorators.cpython-313.pyc
 │   │       │   │   ├── exceptions.cpython-313.pyc
-│   │       │   │   ├── formatting.cpython-313.pyc
+│                                                                                                                                                                                                                              │       │   │   ├── formatting.cpython-313.pyc
 │   │       │   │   ├── globals.cpython-313.pyc
 │   │       │   │   ├── parser.cpython-313.pyc
 │   │       │   │   ├── shell_completion.cpython-313.pyc
