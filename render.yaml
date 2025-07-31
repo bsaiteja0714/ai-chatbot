@@ -6,4 +6,4 @@ services:
     startCommand: "gunicorn wsgi:app --bind 0.0.0.0:$PORT"
     envVars:
       - key: OPENROUTER_API_KEY
-        value: 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
+        sync: false      # Will be set in Render's dashboard
